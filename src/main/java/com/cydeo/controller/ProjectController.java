@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.RolesAllowed;
 import java.util.List;
 
 @RestController
@@ -22,6 +23,7 @@ public class ProjectController {
     }
 
     @GetMapping
+    @RolesAllowed({"Manager"})
     public ResponseEntity<ResponseWrapper> getProjects() {
 
         List<ProjectDTO> projects = projectService.listAllProjects();
@@ -30,6 +32,7 @@ public class ProjectController {
 
     }
 
+    @RolesAllowed({"Manager"})
     @GetMapping("{projectCode}")
     public ResponseEntity<ResponseWrapper> getProjectByUserCode(@PathVariable("projectCode") String projectCode1) {
 
@@ -39,6 +42,7 @@ public class ProjectController {
     }
 
     @PostMapping
+    @RolesAllowed({"Manager","Admin"})
     public ResponseEntity<ResponseWrapper> createProject(@RequestBody ProjectDTO projectDTO) {
 
         projectService.save(projectDTO);
@@ -46,18 +50,21 @@ public class ProjectController {
     }
 
     @PutMapping
+    @RolesAllowed({"Manager"})
     public ResponseEntity<ResponseWrapper> updateProject(@RequestBody ProjectDTO projectDTO) {
         projectService.update(projectDTO);
         return ResponseEntity.ok(new ResponseWrapper("project updated",HttpStatus.OK));
     }
 
     @DeleteMapping("{projectId}")
+    @RolesAllowed({"Manager"})
     public ResponseEntity<ResponseWrapper> deleteUser(@PathVariable ("projectId") String projectCode) {
         projectService.delete(projectCode);
         return ResponseEntity.ok(new ResponseWrapper("project is deleted",HttpStatus.OK));
     }
 
     @GetMapping("/manager/project-status")
+    @RolesAllowed({"Manager"})
     public ResponseEntity<ResponseWrapper> getProjectByManager(){
 
         List<ProjectDTO> projectList = projectService.listAllProjectDetails();
@@ -68,6 +75,7 @@ public class ProjectController {
 
 
     @PutMapping("/manager/complete/{projectCode}")
+    @RolesAllowed({"Manager"})
     public ResponseEntity<ResponseWrapper> managerCompleteProject(@PathVariable("projectCode") String projectCode){
         projectService.complete(projectCode);
         return ResponseEntity.ok(new ResponseWrapper("Project is successfully completed", HttpStatus.OK));
